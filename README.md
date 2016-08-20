@@ -116,7 +116,7 @@ collect:
 Running locally:
 
   * Install the dependencies via `pip install -r requirements.txt`
-  * Run `python -m lxctest/lxctest` or `python3 -m lxctest/lxctest` for python3
+  * Run `python -m lxctest` or `python3 -m lxctest` for python3
   
 For development and testing:
 

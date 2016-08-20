@@ -21,4 +21,8 @@ setup(name='lxctest',
           "Topic :: Software Development :: Testing",
       ],
       packages=['lxctest'],
-      zip_safe=False)
+      entry_points={
+          'console_scripts': ['vmtest=lxctest.lxctest:main']
+      },
+      zip_safe=False
+      )
