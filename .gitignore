@@ -38,6 +38,7 @@ pip-delete-this-directory.txt
 htmlcov/
 .tox/
 .coverage
+cover
 .coverage.*
 .cache
 nosetests.xml
@@ -88,3 +89,6 @@ ENV/
 
 # Rope project settings
 .ropeproject
+
+# IDE
+.idea

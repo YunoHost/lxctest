@@ -1,4 +1,4 @@
-# LXC Test (lxc_test)
+# LXC Test (lxctest)
 
 ## Overview
 
@@ -110,3 +110,21 @@ collect:
     - file1
     - file2
 ```
+
+## Development
+
+Running locally:
+
+  * Install the dependencies via `pip install -r requirements.txt`
+  * Run `python -m lxctest/lxctest` or `python3 -m lxctest/lxctest` for python3
+  
+For development and testing:
+
+  * To run the tests you will need to install tox: `pip install tox`
+  * Run `tox` after changes to get testing across Python 2.7 and 3.4
+  * In addition, it will verify coverage and lint the code
+  * To get coverage report run: `nosetests --with-coverage --cover-erase --cover-tests --cover-package=lxctest --cover-html` and see the cover directory for an HTML report.
+  * Running `nosetest -d` will show values of the objects that fail the comparison in asserts
+  * To see test output run `nosetests --nocapture` as the flag will pass standard out to the console to aid in debugging.
+  
+  

@@ -1,0 +1,13 @@
+---
+lxc:
+  store: release
+  release: lts
+customize:
+    user-data: my_data.txt
+    push:
+        - - my_local_script.sh
+          - /usr/bin/
+        - - examples/scripts/test.py
+          - /root/
+collect: /var/log/syslog
+execute: date

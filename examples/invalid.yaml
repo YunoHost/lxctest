@@ -1,0 +1,4 @@
+---
+foo: bar
+test: [oops]
+fail: {not
