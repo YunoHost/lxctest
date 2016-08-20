@@ -9,10 +9,12 @@ LXC_STORES_DEFAULT = 'release'
 LXC_STORES_CLOUD = ['cloud', 'cloud-daily']
 LXC_RELEASE = ['lts', 'supported']
 LXC_RELEASE_DEFAULT = 'lts'
+LOG_PREFIX = '[Configuration] '
 
 
 def load(filename):
     LOG.info('Starting configuration validation...')
+    LOG.debug('Reading file: %s' % filename)
 
     if not util.file_exist(filename):
         LOG.critical('Given filename does not exist.')
@@ -22,10 +24,13 @@ def load(filename):
     validate_customize(config)
     validate_lxc(config)
 
+    LOG.info('Configuration validation complete!')
+    LOG.debug('Configuration after validation: %s' % config)
     return config
 
 
 def validate_defaults(config):
+    LOG.debug('Configuration from file: %s' % config)
     if config is None or set(CONFIG_KEYS_REQUIRED).isdisjoint(config):
         LOG.critical('Missing at least one required YAML value. Choose from:')
         LOG.critical(CONFIG_KEYS_REQUIRED)
