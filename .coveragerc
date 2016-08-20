@@ -1,4 +1,4 @@
 [report]
 
-exclude_lines =
-    if __name__ == .__main__.:
+[run]
+omit = lxctest/lxctest.py
