@@ -156,6 +156,16 @@ class TestConfiguration(unittest.TestCase):
 
         self.assertRaises(SystemExit, configuration.validate_customize, config)
 
+    def TestPositive(self):
+        expected = {
+            "execute": "date",
+            "lxc": {
+                "release": ["lts"],
+                "store": "release"
+            }
+        }
+
+        self.assertEqual(expected, configuration.load('examples/basic.yaml'))
 
 if __name__ == '__main__':
     unittest.main()
