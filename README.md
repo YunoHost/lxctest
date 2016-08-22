@@ -55,6 +55,7 @@ lxc:
   release:
     - xenial
     - yakkety
+    - fedora/22
 ```
 
 #### Architecture
