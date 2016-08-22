@@ -1,0 +1,7 @@
+---
+lxc:
+  store: release
+  release:
+    - lts
+    - fedora/22
+execute: date
