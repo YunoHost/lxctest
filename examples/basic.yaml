@@ -1,5 +1,5 @@
 ---
 lxc:
   store: release
-  release: lts
+  release: xenial
 execute: date

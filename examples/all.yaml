@@ -1,7 +1,7 @@
 ---
 lxc:
   store: release
-  release: lts
+  release: xenial
 customize:
     user-data: my_data.txt
     push:
