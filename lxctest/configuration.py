@@ -22,7 +22,7 @@ def load(filename):
 
     config = validate_defaults(util.read_yaml_file(filename))
     validate_customize(config)
-    validate_lxc(config)
+    config = validate_lxc(config)
 
     LOG.info('Configuration validation complete!')
     LOG.debug('Configuration after validation: %s' % config)
@@ -48,7 +48,8 @@ def validate_defaults(config):
 
     # Convert release to list to be consistent from here on out
     # Avoids needing to check for string or list everywhere
-    config['lxc']['release'] = config['lxc']['release'].split()
+    if isinstance(config['lxc']['release'], str):
+        config['lxc']['release'] = config['lxc']['release'].split()
 
     return config
 
@@ -59,14 +60,16 @@ def validate_lxc(config):
         LOG.critical(LXC_STORES)
         sys.exit(1)
 
-    ubuntu_releases = util.get_ubuntu_releases()
+    releases = []
     for release in config['lxc']['release']:
-        if release not in set(LXC_RELEASE):
-            if release not in ubuntu_releases:
-                LOG.critical('Release is not a valid option. Choose from:')
-                LOG.critical(LXC_RELEASE)
-                LOG.critical('or an Ubuntu release (see distro-info).')
-                sys.exit(1)
+        if release == 'lts':
+            releases = releases + util.get_ubuntu_release_lts()
+        elif release == 'supported':
+            releases = releases + util.get_ubuntu_release_supported()
+        else:
+            releases.append(release)
+
+    config['lxc']['release'] = list(set(releases))
 
     if 'customize' in config and 'user-data' in config['customize']:
         if config['lxc']['store'] not in set(LXC_STORES_CLOUD):
@@ -74,6 +77,8 @@ def validate_lxc(config):
                          ' Choose from:')
             LOG.critical(LXC_STORES_CLOUD)
             sys.exit(1)
+
+    return config
 
 
 def validate_customize(config):

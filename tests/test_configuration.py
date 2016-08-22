@@ -73,17 +73,6 @@ class TestConfiguration(unittest.TestCase):
 
         self.assertRaises(SystemExit, configuration.validate_lxc, config)
 
-    def TestLxcBadRelease(self):
-        config = {
-            "execute": "date",
-            "lxc": {
-                "release": ["xxyzz"],
-                "store": "release"
-            }
-        }
-
-        self.assertRaises(SystemExit, configuration.validate_lxc, config)
-
     def TestLxcUserData(self):
         config = {
             "customize": {
@@ -160,7 +149,7 @@ class TestConfiguration(unittest.TestCase):
         expected = {
             "execute": "date",
             "lxc": {
-                "release": ["lts"],
+                "release": ["xenial"],
                 "store": "release"
             }
         }
