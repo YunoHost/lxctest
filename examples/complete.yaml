@@ -1,0 +1,13 @@
+---
+lxc:
+  store: ubuntu
+  releases: supported
+push:
+  -  - ./examples/tests/files/script.sh
+     - /usr/bin/
+user-data: ./examples/tests/files/user-data.txt
+execute:
+  - date
+pull:
+  - - /var/log/syslog
+    - /tmp

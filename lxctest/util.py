@@ -1,15 +1,17 @@
+from distutils.spawn import find_executable
 import os
-import platform
 import subprocess
 import sys
 import yaml
 
-from distutils.spawn import find_executable
 
 from .log import LOG
 
 
 def check_dependencies(dependencies):
+    """
+    Determines if command exists
+    """
     for depend in dependencies:
         if not which(depend):
             LOG.critical('%s: command not found. Please install.' % depend)
@@ -17,35 +19,43 @@ def check_dependencies(dependencies):
 
 
 def file_exist(filename):
+    """
+    Determines if file exists
+    """
     return os.path.isfile(filename)
 
 
 def get_system_arch():
-    return hw_to_arch(platform.machine())
+    """
+    Determines system package architecture.
+
+    Output differs from arch in that it is more simple and
+    does not require translation between one-offs (e.g. 386, 586, 686)
+    """
+    stdout, _ = run(['dpkg', '--print-architecture'])
+    return stdout.rstrip()
 
 
 def get_ubuntu_release_lts():
+    """
+    Returns list of current Ubuntu LTS release(s).
+    """
     stdout, _ = run(['distro-info', '--lts'])
     return stdout.split()
 
 
 def get_ubuntu_release_supported():
+    """
+    Returns list of supported Ubuntu releases.
+    """
     stdout, _ = run(['distro-info', '--supported'])
     return stdout.split()
 
 
-def hw_to_arch(arch):
-    hw_to_arch = {
-        'i586': 'i386',
-        'i686': 'i386',
-        'x86_64': 'amd64',
-        'ppc64le': 'ppc64el',
-        'aarch64': 'arm64',
-    }
-    return hw_to_arch.get(arch, arch)
-
-
 def read_yaml_file(filename):
+    """
+    Attempts to read and parse a YAML file into a dictionary.
+    """
     with open(filename, 'r') as fp:
         try:
             yaml_dict = yaml.safe_load(fp)
@@ -57,7 +67,10 @@ def read_yaml_file(filename):
 
 
 def run(command):
-    LOG.debug(' '.join(command))
+    """
+    Wrapper around subprocess to execute commands.
+    """
+    LOG.debug('Running command: `%s`' % ' '.join(command))
 
     try:
         sp = subprocess.Popen(command,
@@ -74,4 +87,7 @@ def run(command):
 
 
 def which(command):
+    """
+    Like the unix 'which' command, but returns boolean.
+    """
     return find_executable(command)

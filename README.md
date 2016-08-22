@@ -22,22 +22,22 @@ The image specification defines what LXC image will be used for the test. This i
 ```
 lxc:
   store: release
-  release: lts
+  releases: lts
 ```
 
 #### Store
 
 Defines which store of Ubuntu images to use. Two options:
 
-- release: standard images, see `lxc image list images:` for a full list. This is the default option.
-- cloud: Images containing cloud-init, see `lxc image list ubuntu:` for a full list.
-- cloud-daily: Daily images containing cloud-init, see `lxc image list ubuntu-daily:` for a full list.
+- images: standard images, see `lxc image list images:` for a full list. This is the default option.
+- ubuntu: Images containing cloud-init, see `lxc image list ubuntu:` for a full list.
+- ubuntu-daily: Daily images containing cloud-init, see `lxc image list ubuntu-daily:` for a full list.
 
 ```
 lxc:
-  store: release  # Default
-  store: cloud
-  store: cloud-daily
+  store: images  # Default
+  store: ubuntu
+  store: ubuntu-daily
 ```
 
 #### Release
@@ -50,9 +50,9 @@ Defines the targeted releases from the following options:
 
 ```
 lxc:
-  release: lts  # Default
-  release: supported
-  release:
+  releases: lts  # Default
+  releases: supported
+  releases:
     - xenial
     - yakkety
     - fedora/22
@@ -71,12 +71,11 @@ There are two possible ways to customize an image: 1) push specific files to a c
 Files can be pushed over using `lxc file push` to customize the container. This is done via a list of lists specifying the source and then destination.
 
 ```
-customize:
-  push:
-    - - my_local_script.sh
-      - /usr/bin/
-    - - examples/scripts/test.py
-      - /root/
+push:
+  - - my_local_script.sh
+    - /usr/bin/
+  - - examples/scripts/test.py
+    - /root/
 ```
 
 #### User-Data
@@ -84,16 +83,16 @@ customize:
 If the image used contains cloud-init, then user-data can be passed to the container. This is done using a file containing the cloud data. This data is passed in via `--config=user.user-data=` option on container launch.
 
 ```
-customize:
-  user-data: my_data.txt
+user-data: my_data.txt
 ```
 
 ### Command Execution
 
-Runs `lxc exec` on a command or list of commands to execute once the container is up and running.
+Runs `lxc exec` on a list of commands to execute once the container is up and running.
 
 ```
-execute: python my_script.py
+execute: 
+  - python my_script.py
 execute:
   - whoami
   - date
@@ -105,11 +104,11 @@ execute:
 Files can be pulled using `lxc file pull` to collect information or results from the container. Only the source is required as all files will be put in the log directory.
 
 ```
-collect:
-  pull: file
-  pull:
-    - file1
-    - file2
+pull: 
+  - file
+pull:
+  - file1
+  - file2
 ```
 
 ## Development
@@ -117,7 +116,7 @@ collect:
 Running locally:
 
   * Install the dependencies via `pip install -r requirements.txt`
-  * Run `python -m lxctest` or `python3 -m lxctest` for python3
+  * Run `python3 -m lxctest`
   
 For development and testing:
 

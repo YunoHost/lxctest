@@ -1,11 +1,13 @@
 import logging
 import sys
 
-PROJECT_NAME = 'lxctest'
+
+LOG = logging.getLogger(name='lxctest')
 
 
 def init(debug=False):
+    """
+    Initializes logging to stdout and INFO level.
+    """
     level = logging.DEBUG if debug else logging.INFO
     logging.basicConfig(stream=sys.stdout, level=level)
-
-LOG = logging.getLogger(name=PROJECT_NAME)

@@ -1,5 +1,3 @@
 ---
-lxc:
-  store: release
-  release: xenial
-execute: date
+execute:
+  - date
