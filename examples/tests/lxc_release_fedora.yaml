@@ -1,0 +1,9 @@
+# Showing fedora image being used.
+---
+lxc:
+  store: release
+  releases:
+    - fedora/22
+    - xenial
+execute:
+  - date

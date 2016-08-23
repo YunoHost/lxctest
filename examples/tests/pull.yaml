@@ -1,0 +1,6 @@
+# Example of pulling a list of files.
+---
+execute:
+  - date
+pull:
+  - /var/log/syslog

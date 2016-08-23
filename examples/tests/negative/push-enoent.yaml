@@ -1,0 +1,7 @@
+# Push file does not exist.
+---
+execute:
+  - date
+push:
+  - - enoent.sh
+    - /root/

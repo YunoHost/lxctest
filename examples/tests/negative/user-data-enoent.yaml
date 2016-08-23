@@ -1,0 +1,5 @@
+# The user-data file does not exist.
+---
+execute:
+  - date
+user-data: enoent.txt

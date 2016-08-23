@@ -1,1 +1,7 @@
-# user-data, but not cloud image
+# Store does not provide a not cloud image, but user-data requested.
+---
+lxc:
+  store: images
+execute:
+  - date
+user-data: ./examples/tests/files/user-data.txt

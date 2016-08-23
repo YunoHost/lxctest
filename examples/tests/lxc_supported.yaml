@@ -1,0 +1,6 @@
+# Using supported releases for all tests.
+---
+lxc:
+  releases: supported
+execute:
+  - date

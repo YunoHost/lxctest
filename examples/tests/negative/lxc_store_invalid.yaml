@@ -1,0 +1,6 @@
+# Invalid lxc store option.
+---
+lxc:
+  store: invalidstore
+execute:
+  - date

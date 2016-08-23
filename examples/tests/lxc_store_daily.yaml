@@ -1,0 +1,6 @@
+# Using the ubuntu-daily lxc store.
+---
+lxc:
+  store: ubuntu-daily
+execute:
+  - date

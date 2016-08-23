@@ -1,0 +1,6 @@
+# Using the images lxc store.
+---
+lxc:
+  store: images
+execute:
+  - date

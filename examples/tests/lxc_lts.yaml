@@ -1,0 +1,6 @@
+# Release requests LTS release.
+---
+lxc:
+  releases: lts
+execute:
+  - date

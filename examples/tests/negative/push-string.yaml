@@ -1,0 +1,5 @@
+# Push list is a string instead of a 2D list.
+---
+execute:
+  - date
+push: ./examples/tests/files/script.sh

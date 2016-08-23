@@ -1,0 +1,7 @@
+# Example of executing a number of commands.
+---
+execute:
+  - date
+  - whoami
+  - uname -a
+  - arch

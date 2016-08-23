@@ -1,3 +1,4 @@
+# Not quite an empty file, but still none of the required options.
 ---
 lxc:
   store: images

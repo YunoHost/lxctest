@@ -1,1 +1,5 @@
-# pull not a list
+# Pull needs to be a list of files, not a sting
+---
+execute:
+  - date
+pull: /var/log/syslog

@@ -1,0 +1,6 @@
+# Using the ubuntu lxc store.
+---
+lxc:
+  store: ubuntu
+execute:
+  - date

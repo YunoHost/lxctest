@@ -1,0 +1,8 @@
+# The lxc store needs to be a string, not a list
+---
+lxc:
+  store:
+    - this_store
+    - that_store
+execute:
+  - date

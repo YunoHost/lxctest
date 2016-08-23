@@ -1,0 +1,7 @@
+# Example of pushing files, source and destination.
+---
+execute:
+  - date
+push:
+  -  - ./examples/tests/files/script.sh
+     - /usr/bin/

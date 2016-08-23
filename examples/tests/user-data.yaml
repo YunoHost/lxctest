@@ -1,0 +1,5 @@
+# Example of user-data file.
+---
+execute:
+  - date
+user-data: ./examples/tests/files/user-data.txt

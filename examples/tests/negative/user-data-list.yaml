@@ -1,0 +1,6 @@
+# Cannot have a list of user-data, only a string.
+---
+execute:
+  - date
+user-data:
+  - ./examples/tests/files/user-data.txt

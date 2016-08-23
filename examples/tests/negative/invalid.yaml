@@ -1,3 +1,4 @@
+# Invalid YAML
 ---
 foo: bar
 test: [oops]
