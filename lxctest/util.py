@@ -14,7 +14,7 @@ def check_dependencies(dependencies):
     """
     for depend in dependencies:
         if not which(depend):
-            LOG.critical('%s: command not found. Please install.' % depend)
+            LOG.critical('%s: command not found, please install!' % depend)
             sys.exit(1)
 
 
@@ -32,7 +32,7 @@ def get_system_arch():
     Output differs from arch in that it is more simple and
     does not require translation between one-offs (e.g. 386, 586, 686)
     """
-    stdout, _ = run(['dpkg', '--print-architecture'])
+    stdout, _, _ = run(['dpkg', '--print-architecture'])
     return stdout.rstrip()
 
 
@@ -40,7 +40,7 @@ def get_ubuntu_release_lts():
     """
     Returns list of current Ubuntu LTS release(s).
     """
-    stdout, _ = run(['distro-info', '--lts'])
+    stdout, _, _ = run(['distro-info', '--lts'])
     return stdout.split()
 
 
@@ -48,7 +48,7 @@ def get_ubuntu_release_supported():
     """
     Returns list of supported Ubuntu releases.
     """
-    stdout, _ = run(['distro-info', '--supported'])
+    stdout, _, _ = run(['distro-info', '--supported'])
     return stdout.split()
 
 
@@ -60,7 +60,7 @@ def read_yaml_file(filename):
         try:
             yaml_dict = yaml.safe_load(fp)
         except yaml.parser.ParserError:
-            LOG.critical('File is not valid YAML.')
+            LOG.critical('File is not valid YAML')
             sys.exit(1)
 
     return yaml_dict
@@ -73,17 +73,18 @@ def run(command):
     LOG.debug('Running command: `%s`' % ' '.join(command))
 
     try:
-        sp = subprocess.Popen(command,
-                              stdout=subprocess.PIPE,
-                              stderr=subprocess.PIPE)
+        child = subprocess.Popen(command,
+                                 stdout=subprocess.PIPE,
+                                 stderr=subprocess.PIPE)
 
-        (stdout, stderr) = sp.communicate()
+        (stdout, stderr) = child.communicate()
+        return_code = child.returncode
     except OSError as e:
         LOG.critical("Command failed: %s" % command)
         LOG.critical("Error: %s: %s" % (e.errno, e.strerror))
         sys.exit(1)
 
-    return stdout.decode('utf-8'), stderr.decode('utf-8')
+    return stdout.decode('utf-8'), stderr.decode('utf-8'), return_code
 
 
 def which(command):

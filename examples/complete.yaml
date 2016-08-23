@@ -9,5 +9,4 @@ user-data: ./examples/tests/files/user-data.txt
 execute:
   - date
 pull:
-  - - /var/log/syslog
-    - /tmp
+  - /var/log/syslog

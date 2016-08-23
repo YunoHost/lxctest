@@ -13,13 +13,13 @@ LXC_RELEASE_DEFAULT = ['lts']
 
 class Configuration:
     def __init__(self, filename):
-        self.test = None
-        self.lxc = None
+        self.test = {}
+        self.lxc = {}
 
-        LOG.debug('Loading configuration from file...')
+        LOG.info('Loading configuration from file')
         self.load_file(filename)
 
-        LOG.debug('Starting configuration validation...')
+        LOG.debug('Starting configuration validation')
         self.validate_required_fields()
         self.setup_lxc_stanza()
         self.setup_lxc_releases()
@@ -30,10 +30,10 @@ class Configuration:
         self.validate_push()
         self.validate_user_data()
 
-        LOG.debug('Configuration validation complete!')
-        LOG.debug('Configuration after validation:')
-        LOG.debug(self.test)
-        LOG.debug(self.lxc)
+        LOG.info('Test configuration:')
+        LOG.info(self.test)
+        LOG.info('LXC configuration:')
+        LOG.info(self.lxc)
 
     def load_file(self, filename):
         """
@@ -43,7 +43,7 @@ class Configuration:
         LOG.debug('Reading file: %s' % filename)
 
         if not util.file_exist(filename):
-            LOG.critical('Given filename does not exist.')
+            LOG.critical('Given filename does not exist')
             sys.exit(1)
 
         config = util.read_yaml_file(filename)
@@ -100,7 +100,7 @@ class Configuration:
         """
         if 'user-data' in self.test:
             if self.lxc['store'] not in set(LXC_STORES_CLOUD):
-                LOG.critical('You specified user-data, but not a cloud store.'
+                LOG.critical('You specified user-data, but not a cloud store'
                              ' Choose from:')
                 LOG.critical(LXC_STORES_CLOUD)
                 sys.exit(1)
@@ -119,13 +119,13 @@ class Configuration:
         Validates the LXC store option is from one of the valid options.
         """
         if self.lxc['store'] not in set(LXC_STORES):
-            LOG.critical('LXC store is not a valid option.')
+            LOG.critical('LXC store is not a valid option')
             LOG.critical('Choose from:')
             LOG.critical(LXC_STORES)
             sys.exit(1)
 
         if type(self.lxc['store']) != str:
-                LOG.critical('LXC store must be a string not a list.')
+                LOG.critical('LXC store must be a string not a list')
                 sys.exit(1)
 
     def validate_pull(self):
@@ -134,7 +134,7 @@ class Configuration:
         """
         if 'pull' in self.test:
             if type(self.test['pull']) != list:
-                LOG.critical('Pull files must be a list.')
+                LOG.critical('Pull files must be a list')
                 sys.exit(1)
 
     def validate_push(self):
@@ -145,12 +145,12 @@ class Configuration:
         if 'push' in self.test:
             push_list = self.test['push']
             if type(push_list) != list:
-                LOG.critical('Push files must be a list.')
+                LOG.critical('Push files must be a list')
                 sys.exit(1)
 
             for item in push_list:
                 if not util.file_exist(item[0]):
-                    LOG.critical('Push file (%s) does not exist.' %
+                    LOG.critical('Push file (%s) does not exist' %
                                  item[0])
                     sys.exit(1)
 
@@ -166,7 +166,7 @@ class Configuration:
             sys.exit(1)
 
         if set(CONFIG_KEYS_REQUIRED).isdisjoint(self.test):
-            LOG.critical('Missing at least one required value.')
+            LOG.critical('Missing at least one required value')
             LOG.critical('Choose from:')
             LOG.critical(CONFIG_KEYS_REQUIRED)
             sys.exit(1)
@@ -178,10 +178,10 @@ class Configuration:
         if 'user-data' in self.test:
             user_data = self.test['user-data']
             if type(user_data) != str:
-                LOG.critical('User-data must be a string not a list.')
+                LOG.critical('User-data must be a string not a list')
                 sys.exit(1)
 
             if not util.file_exist(user_data):
-                LOG.critical('User-data file (%s) does not exist.' %
+                LOG.critical('User-data file (%s) does not exist' %
                              user_data)
                 sys.exit(1)
