@@ -43,18 +43,22 @@ class Configuration:
         LOG.debug('Reading file: %s' % filename)
 
         if not util.file_exist(filename):
-            LOG.critical('Given filename does not exist')
+            LOG.critical('Given configuration filename does not exist')
             sys.exit(1)
 
         config = util.read_yaml_file(filename)
+        if config is None:
+            LOG.critical('Config is empty, need at least one required value')
+            LOG.critical('Choose from:')
+            LOG.critical(CONFIG_KEYS_REQUIRED)
+            sys.exit(1)
+
         LOG.debug('Configuration from file: %s' % config)
 
         # seperate LXC specific stuff
         if 'lxc' in config:
             self.lxc = config['lxc']
             del config['lxc']
-        else:
-            self.lxc = {}
 
         self.test = config
 
@@ -83,7 +87,7 @@ class Configuration:
         """
         if 'store' not in self.lxc:
             self.lxc['store'] = LXC_STORES_DEFAULT
-        if 'release' not in self.lxc:
+        if 'releases' not in self.lxc:
             self.lxc['releases'] = LXC_RELEASE_DEFAULT
 
         self.lxc['arch'] = util.get_system_arch()
@@ -118,15 +122,15 @@ class Configuration:
         """
         Validates the LXC store option is from one of the valid options.
         """
+        if type(self.lxc['store']) != str:
+            LOG.critical('LXC store must be a string not a list')
+            sys.exit(1)
+
         if self.lxc['store'] not in set(LXC_STORES):
             LOG.critical('LXC store is not a valid option')
             LOG.critical('Choose from:')
             LOG.critical(LXC_STORES)
             sys.exit(1)
-
-        if type(self.lxc['store']) != str:
-                LOG.critical('LXC store must be a string not a list')
-                sys.exit(1)
 
     def validate_pull(self):
         """
@@ -159,12 +163,6 @@ class Configuration:
         Validates that at least one of the required fields exist in the
         config.
         """
-        if self.test is None:
-            LOG.critical('Config is empty, need at least one required value')
-            LOG.critical('Choose from:')
-            LOG.critical(CONFIG_KEYS_REQUIRED)
-            sys.exit(1)
-
         if set(CONFIG_KEYS_REQUIRED).isdisjoint(self.test):
             LOG.critical('Missing at least one required value')
             LOG.critical('Choose from:')
@@ -182,6 +180,9 @@ class Configuration:
                 sys.exit(1)
 
             if not util.file_exist(user_data):
+                import os
+                print(os.path)
+                print(user_data)
                 LOG.critical('User-data file (%s) does not exist' %
                              user_data)
                 sys.exit(1)

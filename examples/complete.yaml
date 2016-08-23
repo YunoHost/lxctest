@@ -5,7 +5,7 @@ lxc:
 push:
   -  - ./examples/tests/files/script.sh
      - /usr/bin/
-user-data: ./examples/tests/files/user-data.txt
+user-data: ./examples/tests/files/user_data.txt
 execute:
   - date
 pull:

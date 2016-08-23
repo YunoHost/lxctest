@@ -2,6 +2,4 @@
 ---
 lxc:
   store: images
-execute:
-  - date
-user-data: ./examples/tests/files/user-data.txt
+user-data: ./examples/tests/files/user_data.txt

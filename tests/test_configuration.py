@@ -1,160 +1,128 @@
 import unittest
 
-from lxctest import configuration
+from lxctest.configuration import Configuration
 
 
 class TestConfiguration(unittest.TestCase):
-    def TestFileEnoent(self):
-        self.assertRaises(SystemExit, configuration.load,
-                          'examples/enoent.yaml')
+    def test_execute(self):
+        yaml = 'examples/tests/execute.yaml'
+        self.assertIsInstance(Configuration(yaml),
+                              Configuration)
 
-    def TestMissingKey(self):
-        config = {}
-        self.assertRaises(SystemExit, configuration.validate_defaults, config)
+    def test_lxc_empty(self):
+        yaml = 'examples/tests/lxc_empty.yaml'
+        self.assertIsInstance(Configuration(yaml),
+                              Configuration)
 
-    def TestMissingLxc(self):
-        config = {
-            "execute": "date",
-        }
+    def test_lxc_lts(self):
+        yaml = 'examples/tests/lxc_lts.yaml'
+        self.assertIsInstance(Configuration(yaml),
+                              Configuration)
 
-        expected = {
-            "execute": "date",
-            "lxc": {
-                "release": ["lts"],
-                "store": "release"
-            }
-        }
+    def test_lxc_release_fedora(self):
+        yaml = 'examples/tests/lxc_release_fedora.yaml'
+        self.assertIsInstance(Configuration(yaml),
+                              Configuration)
 
-        self.assertEqual(expected, configuration.validate_defaults(config))
+    def test_lxc_store_daily(self):
+        yaml = 'examples/tests/lxc_store_daily.yaml'
+        self.assertIsInstance(Configuration(yaml),
+                              Configuration)
 
-    def TestMissingRelease(self):
-        config = {
-            "execute": "date",
-            "lxc": {
-                "store": "release"
-            }
-        }
-        expected = {
-            "execute": "date",
-            "lxc": {
-                "release": ["lts"],
-                "store": "release"
-            }
-        }
+    def test_lxc_store_images(self):
+        yaml = 'examples/tests/lxc_store_images.yaml'
+        self.assertIsInstance(Configuration(yaml),
+                              Configuration)
 
-        self.assertEqual(expected, configuration.validate_defaults(config))
+    def test_lxc_store_ubuntu(self):
+        yaml = 'examples/tests/lxc_store_ubuntu.yaml'
+        self.assertIsInstance(Configuration(yaml),
+                              Configuration)
 
-    def TestMissingStore(self):
-        config = {
-            "execute": "date",
-            "lxc": {
-                "release": "lts"
-            }
-        }
+    def test_lxc_supported(self):
+        yaml = 'examples/tests/lxc_supported.yaml'
+        self.assertIsInstance(Configuration(yaml),
+                              Configuration)
 
-        expected = {
-            "execute": "date",
-            "lxc": {
-                "release": ["lts"],
-                "store": "release"
-            }
-        }
+    def test_negative_empty_yaml(self):
+        self.assertRaises(SystemExit,
+                          Configuration,
+                          'examples/tests/negative/empty.yaml')
 
-        self.assertEqual(expected, configuration.validate_defaults(config))
+    def test_negative_empty_required(self):
+        self.assertRaises(SystemExit,
+                          Configuration,
+                          'examples/tests/negative/empty_required.yaml')
 
-    def TestLxcBadStore(self):
-        config = {
-            "execute": "date",
-            "lxc": {
-                "release": ["lts"],
-                "store": "xxyzz"
-            }
-        }
+    def test_negative_enoent(self):
+        self.assertRaises(SystemExit,
+                          Configuration,
+                          'enoent.yaml')
 
-        self.assertRaises(SystemExit, configuration.validate_lxc, config)
+    def test_negative_execute_string(self):
+        self.assertRaises(SystemExit,
+                          Configuration,
+                          'examples/tests/negative/execute_string.yaml')
 
-    def TestLxcUserData(self):
-        config = {
-            "customize": {
-                "user-data": "my_data.txt"
-            },
-            "lxc": {
-                "release": ["lts"],
-                "store": "release"
-            }
-        }
+    def test_negative_invalid(self):
+        self.assertRaises(SystemExit,
+                          Configuration,
+                          'examples/tests/negative/invalid.yaml')
 
-        self.assertRaises(SystemExit, configuration.validate_lxc, config)
+    def test_negative_lxc_store_invalid(self):
+        self.assertRaises(SystemExit,
+                          Configuration,
+                          'examples/tests/negative/lxc_store_invalid.yaml')
 
-    def TestUserDataList(self):
-        config = {
-            "customize": {
-                "user-data": [
-                    "file1",
-                    "file2"
-                ]
-            },
-            "lxc": {
-                "release": "lts",
-                "store": "release"
-            }
-        }
+    def test_negative_lxc_store_list(self):
+        self.assertRaises(SystemExit,
+                          Configuration,
+                          'examples/tests/negative/lxc_store_list.yaml')
 
-        self.assertRaises(SystemExit, configuration.validate_customize, config)
+    def test_negative_pull_string(self):
+        self.assertRaises(SystemExit,
+                          Configuration,
+                          'examples/tests/negative/pull_string.yaml')
 
-    def TestUserDataEnoent(self):
-        config = {
-            "customize": {
-                "user-data": "enoent.txt"
-            },
-            "lxc": {
-                "release": ["lts"],
-                "store": "release"
-            }
-        }
+    def test_negative_push_enoent(self):
+        self.assertRaises(SystemExit,
+                          Configuration,
+                          'examples/tests/negative/push_enoent.yaml')
 
-        self.assertRaises(SystemExit, configuration.validate_customize, config)
+    def test_negative_push_string(self):
+        self.assertRaises(SystemExit,
+                          Configuration,
+                          'examples/tests/negative/push_string.yaml')
 
-    def TestPushString(self):
-        config = {
-            "customize": {
-                "push": "enoent.sh"
-            },
-            "lxc": {
-                "release": "lts",
-                "store": "release"
-            }
-        }
-        self.assertRaises(SystemExit, configuration.validate_customize, config)
+    def test_negative_user_data_enoent(self):
+        self.assertRaises(SystemExit,
+                          Configuration,
+                          'examples/tests/negative/user_data_enoent.yaml')
 
-    def TestPushEnoent(self):
-        config = {
-            "customize": {
-                "push": [
-                    [
-                        "enoent.sh",
-                        "/usr/bin/"
-                    ]
-                ]
-            },
-            "lxc": {
-                "release": "lts",
-                "store": "release"
-            }
-        }
+    def test_negative_user_data_images(self):
+        self.assertRaises(SystemExit,
+                          Configuration,
+                          'examples/tests/negative/user_data_images.yaml')
 
-        self.assertRaises(SystemExit, configuration.validate_customize, config)
+    def test_negative_user_data_list(self):
+        self.assertRaises(SystemExit,
+                          Configuration,
+                          'examples/tests/negative/user_data_list.yaml')
 
-    def TestPositive(self):
-        expected = {
-            "execute": "date",
-            "lxc": {
-                "release": ["xenial"],
-                "store": "release"
-            }
-        }
+    def test_pull(self):
+        yaml = 'examples/tests/pull.yaml'
+        self.assertIsInstance(Configuration(yaml),
+                              Configuration)
 
-        self.assertEqual(expected, configuration.load('examples/basic.yaml'))
+    def test_push(self):
+        yaml = 'examples/tests/push.yaml'
+        self.assertIsInstance(Configuration(yaml),
+                              Configuration)
+
+    def test_user_data(self):
+        yaml = 'examples/tests/user_data.yaml'
+        self.assertIsInstance(Configuration(yaml),
+                              Configuration)
 
 if __name__ == '__main__':
     unittest.main()

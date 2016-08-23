@@ -1,5 +1,7 @@
 # The user-data file does not exist.
 ---
+lxc:
+  store: ubuntu
 execute:
   - date
 user-data: enoent.txt

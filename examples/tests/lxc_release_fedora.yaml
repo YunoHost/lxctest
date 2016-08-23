@@ -1,7 +1,7 @@
 # Showing fedora image being used.
 ---
 lxc:
-  store: release
+  store: images
   releases:
     - fedora/22
     - xenial

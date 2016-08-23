@@ -1,0 +1,7 @@
+# Example of user-data file.
+---
+lxc:
+  store: ubuntu
+execute:
+  - date
+user-data: ./examples/tests/files/user_data.txt

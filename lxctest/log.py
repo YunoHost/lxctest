@@ -19,14 +19,14 @@ def init(debug=False):
 
     # create unique folder name
     log_dir = 'logs'
-    index = str(randint(1000, 9999))
+
+    index = None
     folder_created = False
     while folder_created is False:
+        index = str(randint(1000, 9999))
         if not os.path.exists(os.path.join(log_dir, index)):
             os.makedirs(os.path.join(log_dir, index))
             folder_created = True
-        else:
-            index = str(randint(1000, 9999))
 
     file_name = os.path.join(log_dir, index, APPNAME + '.log')
     file_handler = logging.FileHandler(file_name, 'w')

@@ -4,8 +4,7 @@ import unittest
 
 
 class TestLxc(unittest.TestCase):
-    def TestPositive(self):
-        self.assertEqual(None, None)
+    pass
 
 
 if __name__ == '__main__':

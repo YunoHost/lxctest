@@ -1,6 +1,8 @@
 # Cannot have a list of user-data, only a string.
 ---
+lxc:
+  store: ubuntu
 execute:
   - date
 user-data:
-  - ./examples/tests/files/user-data.txt
+  - ./examples/tests/files/user_data.txt

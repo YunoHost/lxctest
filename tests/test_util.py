@@ -12,7 +12,7 @@ class TestUtil(unittest.TestCase):
 
     def TestBadYaml(self):
         self.assertRaises(SystemExit, util.read_yaml_file,
-                          'examples/invalid.yaml')
+                          'examples/tests/negative/invalid.yaml')
 
 if __name__ == '__main__':
     unittest.main()

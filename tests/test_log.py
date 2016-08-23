@@ -5,11 +5,14 @@ from lxctest import log
 
 class TestLog(unittest.TestCase):
     def TestLog(self):
-        self.assertEqual(None, log.init())
+        index, logpath = log.init()
+        self.assertIsInstance(index, str)
+        self.assertIsInstance(logpath, str)
 
     def TestDebugLog(self):
-        self.assertEqual(None, log.init(True))
-
+        index, logpath = log.init(True)
+        self.assertIsInstance(index, str)
+        self.assertIsInstance(logpath, str)
 
 if __name__ == '__main__':
     unittest.main()
