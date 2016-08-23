@@ -22,7 +22,7 @@ setup(name='lxctest',
       ],
       packages=['lxctest'],
       entry_points={
-          'console_scripts': ['vmtest=lxctest.lxctest:main']
+          'console_scripts': ['lxctest=lxctest.lxctest:main']
       },
       zip_safe=False
       )
