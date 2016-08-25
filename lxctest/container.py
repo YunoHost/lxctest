@@ -89,18 +89,11 @@ class Container:
         if return_code != 0:
             LOG.critical('Could not start %s' % self.name)
 
-        started = False
         for attempt in range(timeout):
             time.sleep(1)
             cmd = 'lxc exec %s -- %s' % (self.name, 'echo 0')
             _, _, return_code = util.run(cmd.split())
             if return_code == 0:
-                started = True
+                self.return_codes.append(0)
+                LOG.debug('Successfully started %s' % self.name)
                 break
-
-        if started:
-            LOG.debug('Successfully started %s' % self.name)
-            self.return_codes.append(0)
-        else:
-            LOG.critical('Could not start %s' % self.name)
-            self.return_codes.append(1)

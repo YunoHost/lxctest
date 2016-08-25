@@ -37,12 +37,7 @@ class Image:
               self.store, release, self.arch)
         out, err, rc = util.run(cmd.split())
 
-        try:
-            results = json.loads(out)
-        except json.decoder.JSONDecodeError:
-            LOG.critical('Invalid JSON received for:')
-            LOG.critical('%s:%s:%s' % (store, release, arch))
-            sys.exit(1)
+        results = json.loads(out)
 
         if len(results) != 1:
             LOG.critical('Invalid (none or too many) image results for:')

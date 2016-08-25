@@ -30,18 +30,22 @@ def run_tests(store, fingerprint, name, test, log_dir):
     c = Container(name)
     c.init(store, fingerprint)
 
-    for push in test['push']:
-        c.push(push[0], push[1])
+    if 'push' in test:
+        for push in test['push']:
+            c.push(push[0], push[1])
 
-    c.config('user.user-data - < %s' % test['user-data'])
+    if 'user-data' in test:
+        c.config('user.user-data - < %s' % test['user-data'])
 
     c.start()
 
-    for command in test['execute']:
-        c.execute(command)
+    if 'execute' in test:
+        for command in test['execute']:
+            c.execute(command)
 
-    for pull in test['pull']:
-        c.pull(pull, log_dir)
+    if 'pull' in test:
+        for pull in test['pull']:
+            c.pull(pull, log_dir)
 
     c.delete()
 
