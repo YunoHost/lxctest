@@ -2,5 +2,7 @@
 pyyaml
 
 # Testing
-nose
 coverage
+flake8
+nose
+
