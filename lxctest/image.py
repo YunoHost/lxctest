@@ -27,10 +27,6 @@ class Image:
                     '-' + self.arch + '-' + self.index)
             self.library[fingerprint] = name
 
-        if len(self.library) == 0:
-            LOG.critical('No valid images found')
-            sys.exit(1)
-
     def find_lxc_image(self, store, arch, release):
         """
         Given a specific LXC store, arch, and release find a matching
@@ -39,17 +35,18 @@ class Image:
         """
         cmd = 'lxc image list --format=json %s: %s/%s' % (
               self.store, release, self.arch)
-        out, _, _ = util.run(cmd.split())
-        results = json.loads(out)
+        out, err, rc = util.run(cmd.split())
 
-        if len(results) == 0:
-            LOG.critical('Found no matching results for:')
+        try:
+            results = json.loads(out)
+        except json.decoder.JSONDecodeError:
+            LOG.critical('Invalid JSON received for:')
             LOG.critical('%s:%s:%s' % (store, release, arch))
             sys.exit(1)
-        elif len(results) > 1:
-            LOG.critical('Found too many images matching results:')
-            for result in results:
-                LOG.critical('%s' % result['properties']['description'])
+
+        if len(results) != 1:
+            LOG.critical('Invalid (none or too many) image results for:')
+            LOG.critical('%s:%s:%s' % (store, release, arch))
             sys.exit(1)
 
         LOG.info('%s' % results[0]['properties']['description'])
