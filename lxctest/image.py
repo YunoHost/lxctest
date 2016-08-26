@@ -1,9 +1,8 @@
 import json
+import logging
 import sys
 
-
 from . import util
-from .log import LOG
 
 
 class Image:
@@ -14,13 +13,15 @@ class Image:
         self.index = index
         self.library = {}
 
+        self.log = logging.getLogger('lxctest')
+
         self.build_image_library()
 
     def build_image_library(self):
         """
         Given the configruation, build a library (dict) of images.
         """
-        LOG.info('Finding images')
+        self.log.info('Finding images')
         for release in self.releases:
             fingerprint = self.find_lxc_image(self.store, self.arch, release)
             name = ('lxctest-' + release.replace('/', '-') +
@@ -40,9 +41,9 @@ class Image:
         results = json.loads(out)
 
         if len(results) != 1:
-            LOG.critical('Invalid (none or too many) image results for:')
-            LOG.critical('%s:%s:%s' % (store, release, arch))
+            self.log.critical('Invalid (none or too many) image results for:')
+            self.log.critical('%s:%s:%s' % (store, release, arch))
             sys.exit(1)
 
-        LOG.info('%s' % results[0]['properties']['description'])
+        self.log.info('%s' % results[0]['properties']['description'])
         return results[0]['fingerprint']

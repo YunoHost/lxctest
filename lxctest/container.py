@@ -1,99 +1,108 @@
 import time
-
+import logging
+import os
 
 from . import util
-from .log import LOG
 
 
 class Container:
-    def __init__(self, name):
+    def __init__(self, name, log_dir, debug):
         self.name = name
-        self.return_codes = []
+
+        self.setup_logging(log_dir, debug)
+        self.log = logging.getLogger(name=self.name)
+
+    def _run(self, cmd):
+        self.log.info(cmd)
+        out, err, return_code = util.run(cmd.split())
+
+        out = out.rstrip()
+        err = err.rstrip()
+
+        if out is not "":
+            self.log.info('%s' % out.rstrip())
+
+        if return_code != 0:
+            self.log.critical('Execution of command failed: %s' % cmd)
+            self.log.critical(err.rstrip())
+
+    def return_code(self):
+        return all(rc == 0 for rc in self.return_codes)
 
     def execute(self, command):
         """
-        Runs a command on a container.
+        Executes a command on a container.
         """
-        cmd = 'lxc exec %s -- %s' % (self.name, command)
-        out, err, return_code = util.run(cmd.split())
-
-        if return_code != 0:
-            LOG.critical('Execution of command failed: %s' % command)
-            LOG.critical(err.rstrip())
-
-        LOG.debug(out.rstrip())
-
-        self.return_codes.append(return_code)
+        self._run('lxc exec %s -- %s' % (self.name, command))
 
     def config(self, config):
         """
         Sets configuration of a container (e.g. user-data).
         """
-        cmd = 'lxc config set %s %s' % (self.name, config)
-        _, _, return_code = util.run(cmd.split())
-
-        self.return_codes.append(return_code)
+        self._run('lxc config set %s %s' % (self.name, config))
 
     def delete(self):
         """
         Force deletes a container.
         """
-        cmd = 'lxc delete --force %s' % self.name
-        _, _, return_code = util.run(cmd.split())
-
-        self.return_codes.append(return_code)
+        self._run('lxc delete --force %s' % self.name)
 
     def init(self, store, fingerprint):
         """
         Initializes a specific container.
         """
-        cmd = 'lxc init %s:%s %s' % (store, fingerprint, self.name)
-        out, err, return_code = util.run(cmd.split())
-
-        if return_code != 0:
-            LOG.critical('Could not init %s' % self.name)
-            LOG.critical(err.rstrip())
-
-        LOG.debug(out.rstrip())
-
-        self.return_codes.append(return_code)
+        self._run('lxc init %s:%s %s' % (store, fingerprint, self.name))
 
     def pull(self, source, target):
         """
         Pulls a file to a container.
         """
-        cmd = 'lxc file pull %s/%s %s' % (self.name, source, target)
-        _, _, return_code = util.run(cmd.split())
-
-        self.return_codes.append(return_code)
+        self._run('lxc file pull %s/%s %s' % (self.name, source, target))
 
     def push(self, source, target):
         """
         Pushes a file to a container.
         """
-        cmd = 'lxc file push %s %s/%s' % (source, self.name, target)
-        _, _, return_code = util.run(cmd.split())
+        self._run('lxc file push %s %s/%s' % (source, self.name, target))
 
-        self.return_codes.append(return_code)
-
-    def return_code(self):
-        return all(rc == 0 for rc in self.return_codes)
-
-    def start(self, timeout=15):
+    def start(self):
         """
         Starts a container
         """
-        cmd = 'lxc start %s' % self.name
-        _, _, return_code = util.run(cmd.split())
+        self._run('lxc start %s' % self.name)
+        self._ready()
 
-        if return_code != 0:
-            LOG.critical('Could not start %s' % self.name)
-
+    def _ready(self, timeout=15):
+        """
+        Checks that a container is ready for usage.
+        """
         for attempt in range(timeout):
             time.sleep(1)
             cmd = 'lxc exec %s -- %s' % (self.name, 'echo 0')
             _, _, return_code = util.run(cmd.split())
             if return_code == 0:
-                self.return_codes.append(0)
-                LOG.debug('Successfully started %s' % self.name)
-                break
+                self.log.debug('Check if started (attempt %s): UP' % attempt)
+                return True
+            else:
+                self.log.debug('Check if started (attempt %s): DOWN' % attempt)
+
+        self.log.info('Failed to start %s' % self.name)
+        return False
+
+    def setup_logging(self, log_dir, debug):
+        """
+        Sets up a logging mechanism for each container's tests
+        rather than having everything dump into one.
+        """
+        level = logging.DEBUG if debug else logging.INFO
+        log = logging.getLogger(self.name)
+
+        file_name = os.path.join(log_dir, self.name + '.log')
+        file_handler = logging.FileHandler(file_name, 'w')
+
+        file_format = '%(asctime)s - %(message)s'
+        formatter = logging.Formatter(file_format)
+        file_handler.setFormatter(formatter)
+
+        log.setLevel(level)
+        log.addHandler(file_handler)

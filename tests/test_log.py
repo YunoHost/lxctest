@@ -4,12 +4,12 @@ from lxctest import log
 
 
 class TestLog(unittest.TestCase):
-    def TestLog(self):
+    def test_log(self):
         index, logpath = log.init()
         self.assertIsInstance(index, str)
         self.assertIsInstance(logpath, str)
 
-    def TestDebugLog(self):
+    def test_debug_log(self):
         index, logpath = log.init(True)
         self.assertIsInstance(index, str)
         self.assertIsInstance(logpath, str)

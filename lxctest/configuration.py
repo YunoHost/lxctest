@@ -1,7 +1,9 @@
+import logging
+import os
 import sys
+import yaml
 
 from . import util
-from .log import LOG
 
 
 CONFIG_KEYS_REQUIRED = ['push', 'user-data', 'execute', 'pull']
@@ -16,10 +18,11 @@ class Configuration:
         self.test = {}
         self.lxc = {}
 
-        LOG.info('Loading configuration from file')
+        self.log = logging.getLogger('lxctest')
+        self.log.info('Loading configuration from file')
         self.load_file(filename)
 
-        LOG.debug('Starting configuration validation')
+        self.log.debug('Starting configuration validation')
         self.validate_required_fields()
         self.setup_lxc_stanza()
         self.setup_lxc_releases()
@@ -30,30 +33,28 @@ class Configuration:
         self.validate_push()
         self.validate_user_data()
 
-        LOG.info('Test configuration:')
-        LOG.info(self.test)
-        LOG.info('LXC configuration:')
-        LOG.info(self.lxc)
+        self.log.info('Test configuration:')
+        self.log.info(self.test)
+        self.log.info('LXC configuration:')
+        self.log.info(self.lxc)
 
     def load_file(self, filename):
         """
         Reads the given YAML filename containing configuration and returns
         the file as a dictionary.
         """
-        LOG.debug('Reading file: %s' % filename)
+        self.log.debug('Reading file: %s' % filename)
 
-        if not util.file_exist(filename):
-            LOG.critical('Given configuration filename does not exist')
+        if not self.file_exist(filename):
+            self.log.critical('Given configuration filename does not exist')
             sys.exit(1)
 
-        config = util.read_yaml_file(filename)
+        config = self.read_yaml_file(filename)
         if config is None:
-            LOG.critical('Config is empty, need at least one required value')
-            LOG.critical('Choose from:')
-            LOG.critical(CONFIG_KEYS_REQUIRED)
+            self.log.critical('Config is invalid yaml or empty')
             sys.exit(1)
 
-        LOG.debug('Configuration from file: %s' % config)
+        self.log.debug('Configuration from file: %s' % config)
 
         # seperate LXC specific stuff
         if 'lxc' in config:
@@ -69,9 +70,9 @@ class Configuration:
         releases = []
         for release in self.lxc['releases']:
             if release == 'lts':
-                releases = releases + util.get_ubuntu_release_lts()
+                releases = releases + self.get_ubuntu_release_lts()
             elif release == 'supported':
-                releases = releases + util.get_ubuntu_release_supported()
+                releases = releases + self.get_ubuntu_release_supported()
             else:
                 releases.append(release)
 
@@ -90,7 +91,7 @@ class Configuration:
         if 'releases' not in self.lxc:
             self.lxc['releases'] = LXC_RELEASE_DEFAULT
 
-        self.lxc['arch'] = util.get_system_arch()
+        self.lxc['arch'] = self.get_system_arch()
 
         # Convert release to list to be consistent from here on out
         # Avoids needing to check for string or list everywhere
@@ -104,9 +105,9 @@ class Configuration:
         """
         if 'user-data' in self.test:
             if self.lxc['store'] not in set(LXC_STORES_CLOUD):
-                LOG.critical('You specified user-data, but not a cloud store'
-                             ' Choose from:')
-                LOG.critical(LXC_STORES_CLOUD)
+                self.log.critical('You specified user-data, but not a ' +
+                                  'cloud store, choose from:')
+                self.log.critical(LXC_STORES_CLOUD)
                 sys.exit(1)
 
     def validate_execute(self):
@@ -115,7 +116,7 @@ class Configuration:
         """
         if 'execute' in self.test:
             if type(self.test['execute']) != list:
-                LOG.critical('Execute must be a list of commands')
+                self.log.critical('Execute must be a list of commands')
                 sys.exit(1)
 
     def validate_lxc_store(self):
@@ -123,13 +124,13 @@ class Configuration:
         Validates the LXC store option is from one of the valid options.
         """
         if type(self.lxc['store']) != str:
-            LOG.critical('LXC store must be a string not a list')
+            self.log.critical('LXC store must be a string not a list')
             sys.exit(1)
 
         if self.lxc['store'] not in set(LXC_STORES):
-            LOG.critical('LXC store is not a valid option')
-            LOG.critical('Choose from:')
-            LOG.critical(LXC_STORES)
+            self.log.critical('LXC store is not a valid option')
+            self.log.critical('Choose from:')
+            self.log.critical(LXC_STORES)
             sys.exit(1)
 
     def validate_pull(self):
@@ -138,7 +139,7 @@ class Configuration:
         """
         if 'pull' in self.test:
             if type(self.test['pull']) != list:
-                LOG.critical('Pull files must be a list')
+                self.log.critical('Pull files must be a list')
                 sys.exit(1)
 
     def validate_push(self):
@@ -149,13 +150,13 @@ class Configuration:
         if 'push' in self.test:
             push_list = self.test['push']
             if type(push_list) != list:
-                LOG.critical('Push files must be a list')
+                self.log.critical('Push files must be a list')
                 sys.exit(1)
 
             for item in push_list:
-                if not util.file_exist(item[0]):
-                    LOG.critical('Push file (%s) does not exist' %
-                                 item[0])
+                if not self.file_exist(item[0]):
+                    self.log.critical('Push file (%s) does not exist' %
+                                      item[0])
                     sys.exit(1)
 
     def validate_required_fields(self):
@@ -164,9 +165,9 @@ class Configuration:
         config.
         """
         if set(CONFIG_KEYS_REQUIRED).isdisjoint(self.test):
-            LOG.critical('Missing at least one required value')
-            LOG.critical('Choose from:')
-            LOG.critical(CONFIG_KEYS_REQUIRED)
+            self.log.critical('Missing at least one required value')
+            self.log.critical('Choose from:')
+            self.log.critical(CONFIG_KEYS_REQUIRED)
             sys.exit(1)
 
     def validate_user_data(self):
@@ -176,13 +177,60 @@ class Configuration:
         if 'user-data' in self.test:
             user_data = self.test['user-data']
             if type(user_data) != str:
-                LOG.critical('User-data must be a string not a list')
+                self.log.critical('User-data must be a string not a list')
                 sys.exit(1)
 
-            if not util.file_exist(user_data):
+            if not self.file_exist(user_data):
                 import os
                 print(os.path)
                 print(user_data)
-                LOG.critical('User-data file (%s) does not exist' %
-                             user_data)
+                self.log.critical('User-data file (%s) does not exist' %
+                                  user_data)
                 sys.exit(1)
+
+    @staticmethod
+    def file_exist(filename):
+        """
+        Determines if file exists
+        """
+        return os.path.isfile(filename)
+
+    @staticmethod
+    def get_system_arch():
+        """
+        Determines system package architecture.
+
+        Output differs from arch in that it is more simple and
+        does not require translation between one-offs (e.g. 386, 586, 686)
+        """
+        stdout, _, _ = util.run(['dpkg', '--print-architecture'])
+        return stdout.rstrip()
+
+    @staticmethod
+    def get_ubuntu_release_lts():
+        """
+        Returns list of current Ubuntu LTS release(s).
+        """
+        stdout, _, _ = util.run(['distro-info', '--lts'])
+        return stdout.split()
+
+    @staticmethod
+    def get_ubuntu_release_supported():
+        """
+        Returns list of supported Ubuntu releases.
+        """
+        stdout, _, _ = util.run(['distro-info', '--supported'])
+        return stdout.split()
+
+    @staticmethod
+    def read_yaml_file(filename):
+        """
+        Attempts to read and parse a YAML file into a dictionary.
+        """
+        with open(filename, 'r') as fp:
+            try:
+                yaml_dict = yaml.safe_load(fp)
+            except yaml.parser.ParserError:
+                return None
+
+        return yaml_dict
