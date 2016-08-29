@@ -1,8 +1,21 @@
-# LXC Test (lxctest)
+# LXCTest (lxctest)
 
 ## Overview
 
 LXC Test provides a wrapper around LXC to automate test execution, while leaving the test creation and analysis to the user. It uses LXC to launch Ubuntu containers with specific customizations, run a series of commands, and items to gather as output all set by the user. By using LXC the user has a much faster way of running tests compared to VMs.
+
+## Running LXCTest
+
+Create a YAML test case file, install dependencies, and then run with:
+
+```
+git clone https://github.com/powersj/lxctest
+cd lxctest
+pip install -r requirements.txt
+python3 -m lxctest <filename>
+```
+
+There are example test case files in the examples directory.
 
 ## YAML Format
 
@@ -110,19 +123,5 @@ pull:
   - file1
   - file2
 ```
-
-## Development
-
-Running locally:
-
-  * Install the dependencies via `pip install -r requirements.txt`
-  * Run `python3 -m lxctest <filename>`
-  
-For development and testing:
-
-  * Run `make test` after changes to get basic testing.
-  * Run `make debug` for test output when triaging issues.
-  * Run `make lint` to run flake8.
-  * Run `make clean` to clean up your environment.
   
   
