@@ -10,6 +10,16 @@ debug:
 lint:
 	python3 -m flake8 lxctest/ tests/ setup.py
 
+pypi-test: lint test clean
+	python3 setup.py test
+	python3 setup.py sdist
+	ls dist/
+	@echo "Ready to upload, execute: twine upload -r test dist/lxctest-[version].tar.gz"
+
+pypi:
+	ls dist/
+	@echo "Ready to upload, execute: twine upload -r pypi dist/lxctest-[version].tar.gz"
+
 clean:
 	rm -rf build/ dist/ logs/ .eggs/ *.egg-info/ .coverage cover/
 	-find . -type f -a \( -name "*.pyc" -o -name "*$$py.class" \) | xargs rm

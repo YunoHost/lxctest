@@ -1,8 +1,15 @@
 from setuptools import setup
 
+
+def readme():
+    with open('README') as f:
+        return f.read()
+
+
 setup(name='lxctest',
-      version='1.0.0',
+      version='1.0.9',
       description='Provides a wrapper around LXC to automate test execution',
+      long_description=readme(),
       author='Joshua Powers',
       author_email='josh.powers@canonical.com',
       url='https://github.com/powersj/lxctest',
@@ -24,7 +31,8 @@ setup(name='lxctest',
       ],
       packages=['lxctest'],
       entry_points={
-          'console_scripts': ['lxctest=lxctest.__main__:main']
+          'console_scripts': ['lxctest=lxctest.lxctest:main']
       },
+      install_requires=['PyYAML'],
       zip_safe=False
       )

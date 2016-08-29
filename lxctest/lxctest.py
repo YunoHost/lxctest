@@ -1,3 +1,5 @@
+import argparse
+from distutils.spawn import find_executable
 import logging
 import os
 from random import randint
@@ -8,7 +10,14 @@ from .container import Container
 from .image import Image
 
 
-def main(filename, debug):
+DEPENDENCIES = ['lxd', 'lxc', 'distro-info']
+
+
+def main():
+    check_python_version()
+    check_dependencies()
+    filename, debug = get_arguments()
+
     index, log_dir = setup_logging('lxctest', debug)
     config = Configuration(filename)
     images = Image(config.lxc, index)
@@ -22,6 +31,9 @@ def main(filename, debug):
 
 
 def run_tests(store, fingerprint, name, test, log_dir, debug):
+    """
+    Wrapper function to run a complete test.
+    """
     c = Container(name, log_dir, debug)
     c.init(store, fingerprint)
 
@@ -47,7 +59,41 @@ def run_tests(store, fingerprint, name, test, log_dir, debug):
     c.delete()
 
 
+def check_python_version():
+    """
+    Verifies running in Python 3.0 or greater.
+    """
+    if sys.version_info < (3, 0):
+        sys.stdout.write("Requires Python 3 or greater.\n")
+        sys.exit(1)
+
+
+def check_dependencies():
+    """
+    Verifies all dependencies exist.
+    """
+    for depend in DEPENDENCIES:
+        if not find_executable(depend):
+            print('%s: command not found, please install!' % depend)
+            sys.exit(1)
+
+
+def get_arguments():
+    """
+    Argparse function to collect filename and debug flag.
+    """
+    parser = argparse.ArgumentParser()
+    parser.add_argument('filename', help='YAML file with configuration')
+    parser.add_argument('-d', '--debug', action='store_true')
+    args = parser.parse_args()
+
+    return args.filename, args.debug
+
+
 def setup_logging(name, debug):
+    """
+    Setup logging to stdout and file.
+    """
     LOG = logging.getLogger(name=name)
     # Basic Setup
     level = logging.DEBUG if debug else logging.INFO
