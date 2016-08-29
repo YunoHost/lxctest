@@ -24,7 +24,7 @@ setup(name='lxctest',
       ],
       packages=['lxctest'],
       entry_points={
-          'console_scripts': ['lxctest=lxctest.lxctest:main']
+          'console_scripts': ['lxctest=lxctest.__main__:main']
       },
       zip_safe=False
       )

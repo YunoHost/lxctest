@@ -7,7 +7,7 @@ from .lxctest import main
 
 DEPENDENCIES = ['lxc', 'lxd', 'distro-info']
 
-if __name__ == '__main__':
+def main():
     for depend in DEPENDENCIES:
         if not find_executable(depend):
             print('%s: command not found, please install!' % depend)
@@ -19,3 +19,6 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     main(args.filename, args.debug)
+
+if __name__ == '__main__':
+    main()
