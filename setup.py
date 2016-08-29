@@ -8,7 +8,8 @@ def readme():
 
 setup(name='lxctest',
       version='1.0.9',
-      description='Provides a wrapper around LXC to automate test execution',
+      description='Provides a wrapper around LXC via the lxd-client tools to '
+                  'automate test execution',
       long_description=readme(),
       author='Joshua Powers',
       author_email='josh.powers@canonical.com',
