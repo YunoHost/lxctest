@@ -1,14 +1,16 @@
 from setuptools import setup
 
 setup(name='lxctest',
-      version='0.1',
+      version='1.0.0',
       description='Provides a wrapper around LXC to automate test execution',
       author='Joshua Powers',
       author_email='josh.powers@canonical.com',
-      url='http://github.com/powersj/lxctest',
+      url='https://github.com/powersj/lxctest',
+      download_url='https://github.com/powersj/lxctest/tarball/master',
       keywords=['lxc', 'test'],
+      license='GNU General Public License v3 or later',
       classifiers=[
-          "Development Status :: 3 - Alpha",
+          "Development Status :: 4 - Beta",
           "Environment :: Console",
           "Intended Audience :: Developers",
           "License :: OSI Approved :: GNU General Public License v3 or later"
