@@ -41,8 +41,10 @@ class Image:
         results = json.loads(out)
 
         if len(results) != 1:
-            self.log.critical('Invalid (none or too many) image results for:')
-            self.log.critical('%s:%s:%s' % (store, release, arch))
+            self.log.critical(('Image search resulted in %s results. '
+                               'Need 1 result.') % len(results))
+            self.log.critical('lxc image list --format=json %s:%s:%s' %
+                              (store, release, arch))
             sys.exit(1)
 
         self.log.info('%s' % results[0]['properties']['description'])

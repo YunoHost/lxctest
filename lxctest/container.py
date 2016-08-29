@@ -1,6 +1,7 @@
 import time
 import logging
 import os
+import shlex
 
 from . import util
 
@@ -14,7 +15,7 @@ class Container:
 
     def _run(self, cmd):
         self.log.info(cmd)
-        out, err, return_code = util.run(cmd.split())
+        out, err, return_code = util.run(shlex.split(cmd))
 
         out = out.rstrip()
         err = err.rstrip()

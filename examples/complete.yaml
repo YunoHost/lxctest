@@ -1,7 +1,7 @@
 ---
 lxc:
   store: ubuntu
-  releases: supported
+  releases: lts
 push:
   -  - ./examples/tests/files/script.sh
      - /usr/bin/

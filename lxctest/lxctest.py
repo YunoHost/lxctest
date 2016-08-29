@@ -30,7 +30,9 @@ def run_tests(store, fingerprint, name, test, log_dir, debug):
             c.push(push[0], push[1])
 
     if 'user-data' in test:
-        c.config('user.user-data - < %s' % test['user-data'])
+        with open(test['user-data'], 'r') as user_data_file:
+            user_data = user_data_file.read()
+        c.config('user.user-data "%s"' % user_data)
 
     c.start()
 
