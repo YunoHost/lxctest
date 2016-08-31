@@ -13,11 +13,15 @@ from .image import Image
 DEPENDENCIES = ['lxd', 'lxc', 'distro-info']
 
 
-def main():
+def init():
     check_python_version()
     check_dependencies()
     filename, debug = get_arguments()
 
+    main(filename, debug)
+
+
+def main(filename, debug):
     index, log_dir = setup_logging('lxctest', debug)
     config = Configuration(filename)
     images = Image(config.lxc, index)

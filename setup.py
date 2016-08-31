@@ -7,7 +7,7 @@ def readme():
 
 
 setup(name='lxctest',
-      version='1.0.10',
+      version='1.0.11',
       description='Provides a wrapper around LXC via the lxd-client tools to '
                   'automate test execution',
       long_description=readme(),
@@ -32,7 +32,7 @@ setup(name='lxctest',
       ],
       packages=['lxctest'],
       entry_points={
-          'console_scripts': ['lxctest=lxctest.lxctest:main']
+          'console_scripts': ['lxctest=lxctest.lxctest:init']
       },
       install_requires=['PyYAML'],
       zip_safe=False

@@ -1,5 +1,5 @@
-from .lxctest import main
+from .lxctest import init
 
 
 if __name__ == '__main__':
-    main()
+    init()
