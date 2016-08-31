@@ -79,7 +79,7 @@ class Container:
         """
         for attempt in range(timeout):
             time.sleep(1)
-            cmd = 'lxc exec %s -- %s' % (self.name, 'echo 0')
+            cmd = 'lxc exec %s -- %s' % (self.name, '/sbin/runlevel')
             _, _, return_code = util.run(cmd.split())
             if return_code == 0:
                 self.log.debug('Check if started (attempt %s): UP' % attempt)
