@@ -13,6 +13,7 @@ container.py
 -  Better method for determining if a container is up (e.g. networking not up till?)
 -  lxc config set, run get afterwards to confirm or print it out
 -  Write tests (going to be long running most likly)
+-  pulled files need to go into a specific directory or have name appended to them
 
 documentation
 =============
