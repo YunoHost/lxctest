@@ -53,8 +53,11 @@ def run_tests(store, fingerprint, name, test, log_dir, debug):
             c.execute(command)
 
     if 'pull' in test:
+        target = os.path.join(log_dir, name)
+        if not os.path.exists(target):
+            os.makedirs(target)
         for pull in test['pull']:
-            c.pull(pull, log_dir)
+            c.pull(pull, target)
 
     c.delete()
 
