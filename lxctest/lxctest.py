@@ -21,7 +21,7 @@ def init():
     main(filename, debug)
 
 
-def main(filename, debug):
+def main(filename, debug=False):
     index, log_dir = setup_logging('lxctest', debug)
     config = Configuration(filename)
     images = Image(config.lxc, index)
