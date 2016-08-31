@@ -7,7 +7,7 @@ def readme():
 
 
 setup(name='lxctest',
-      version='1.0.11',
+      version='1.0.12',
       description='Provides a wrapper around LXC via the lxd-client tools to '
                   'automate test execution',
       long_description=readme(),
