@@ -1,8 +1,8 @@
 import argparse
+import datetime
 from distutils.spawn import find_executable
 import logging
 import os
-from random import randint
 import sys
 
 from .configuration import Configuration
@@ -16,13 +16,13 @@ DEPENDENCIES = ['lxd', 'lxc', 'distro-info']
 def init():
     check_python_version()
     check_dependencies()
-    filename, debug = get_arguments()
+    filename, debug, logdir, save = get_arguments()
 
-    main(filename, debug)
+    main(filename, debug, logdir, save)
 
 
-def main(filename, debug=False):
-    index, log_dir = setup_logging('lxctest', debug)
+def main(filename, debug=False, logdir=False, save=False):
+    index, log_dir = setup_logging('lxctest', debug, logdir)
     config = Configuration(filename)
     images = Image(config.lxc, index)
 
@@ -31,10 +31,10 @@ def main(filename, debug=False):
     log.info('Building containers and running tests')
     for fingerprint, name in images.library.items():
         run_tests(config.lxc['store'], fingerprint, name,
-                  config.test, log_dir, debug)
+                  config.test, log_dir, debug, save)
 
 
-def run_tests(store, fingerprint, name, test, log_dir, debug):
+def run_tests(store, fingerprint, name, test, log_dir, debug, save):
     """
     Wrapper function to run a complete test.
     """
@@ -63,7 +63,8 @@ def run_tests(store, fingerprint, name, test, log_dir, debug):
         for pull in test['pull']:
             c.pull(pull, target)
 
-    c.delete()
+    if not save:
+        c.delete()
 
 
 def check_python_version():
@@ -90,40 +91,50 @@ def get_arguments():
     Argparse function to collect filename and debug flag.
     """
     parser = argparse.ArgumentParser()
-    parser.add_argument('filename', help='YAML file with configuration')
-    parser.add_argument('-d', '--debug', action='store_true')
+    parser.add_argument('filename',
+                        help='YAML file with test case')
+    parser.add_argument('-d', '--debug', action='store_true',
+                        help='enable additional output')
+    parser.add_argument('-l', '--logdir',
+                        help='optional location to log directory')
+    parser.add_argument('-s', '--save', action='store_true',
+                        help='save containers, do not delete')
     args = parser.parse_args()
 
-    return args.filename, args.debug
+    return args.filename, args.debug, args.logdir, args.save
 
 
-def setup_logging(name, debug):
+def setup_logging(name, debug, user_logdir):
     """
     Setup logging to stdout and file.
     """
     LOG = logging.getLogger(name=name)
+
     # Basic Setup
     level = logging.DEBUG if debug else logging.INFO
     logging.basicConfig(stream=sys.stdout,
                         level=level)
 
     # Determine Unique Folder Name
-    log_dir = 'logs'
-    index = None
-    folder_created = False
-    while folder_created is False:
-        index = str(randint(1000, 9999))
-        if not os.path.exists(os.path.join(log_dir, index)):
-            os.makedirs(os.path.join(log_dir, index))
-            folder_created = True
+    # index like '20160901T133119'
+    index = (datetime.datetime.now().isoformat()
+             .replace(':', '').replace('-', '').replace('T', '-')
+             .split('.')[0])
+
+    log_dir = os.path.join('logs', index)
+    if user_logdir:
+        log_dir = user_logdir
+
+    if not os.path.exists(log_dir):
+        os.makedirs(log_dir)
 
     # File Stream Handler
-    file_name = os.path.join(log_dir, index, name + '.log')
-    fh = logging.FileHandler(file_name, 'w')
+    log_file = os.path.join(log_dir, name + '.log')
+    fh = logging.FileHandler(log_file, 'w')
     formatter = logging.Formatter('%(asctime)s - %(levelname)8s - %(message)s')
     fh.setFormatter(formatter)
     LOG.addHandler(fh)
 
-    LOG.info('Logging to %s' % file_name)
+    LOG.info('Logging to %s' % log_file)
 
-    return index, os.path.join(log_dir, index)
+    return index, log_dir

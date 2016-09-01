@@ -64,6 +64,9 @@ class TestConfiguration(unittest.TestCase):
                           Configuration,
                           'examples/tests/negative/execute_string.yaml')
 
+    def test_negative_filename(self):
+        self.assertFalse(Configuration.file_exist(None))
+
     def test_negative_invalid(self):
         self.assertRaises(SystemExit,
                           Configuration,

@@ -193,6 +193,9 @@ class Configuration:
         """
         Determines if file exists
         """
+        if not filename:
+            return False
+
         return os.path.isfile(filename)
 
     @staticmethod

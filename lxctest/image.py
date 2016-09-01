@@ -24,8 +24,8 @@ class Image:
         self.log.info('Finding images')
         for release in self.releases:
             fingerprint = self.find_lxc_image(self.store, self.arch, release)
-            name = ('lxctest-' + release.replace('/', '-') +
-                    '-' + self.arch + '-' + self.index)
+            name = ('lxctest-' + self.arch + '-' +
+                    release.replace('/', '-') + '-' + self.index)
             self.library[fingerprint] = name
 
     def find_lxc_image(self, store, arch, release):
