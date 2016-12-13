@@ -1,4 +1,4 @@
-from .lxctest import init
+from lxctest import init
 
 
 if __name__ == '__main__':

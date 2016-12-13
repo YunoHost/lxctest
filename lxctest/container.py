@@ -3,7 +3,7 @@ import logging
 import os
 import shlex
 
-from . import util
+import util
 
 
 class Container:

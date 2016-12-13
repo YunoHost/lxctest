@@ -1,11 +1,11 @@
 ---
 lxc:
-  store: ubuntu
-  releases: lts
+  store: images
+  releases: debian/jessie
+  fingerprint: 9003a08ba310
 push:
   -  - ./examples/tests/files/script.sh
      - /usr/bin/
-user-data: ./examples/tests/files/user_data.txt
 execute:
   - date
 pull:

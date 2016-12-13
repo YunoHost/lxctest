@@ -5,9 +5,9 @@ import logging
 import os
 import sys
 
-from .configuration import Configuration
-from .container import Container
-from .image import Image
+from configuration import Configuration
+from container import Container
+from image import Image
 
 
 DEPENDENCIES = ['lxd', 'lxc', 'distro-info']

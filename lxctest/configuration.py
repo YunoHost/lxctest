@@ -3,7 +3,7 @@ import os
 import sys
 import yaml
 
-from . import util
+import util
 
 
 CONFIG_KEYS_REQUIRED = ['push', 'user-data', 'execute', 'pull']

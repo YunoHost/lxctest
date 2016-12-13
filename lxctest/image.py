@@ -2,7 +2,7 @@ import json
 import logging
 import sys
 
-from . import util
+import util
 
 
 class Image:
@@ -10,6 +10,8 @@ class Image:
         self.store = config['store']
         self.arch = config['arch']
         self.releases = config['releases']
+        # FIXME : Workaround broken --format=json option in find_lxc_image
+        self.fingerprint = config['fingerprint']
         self.index = index
         self.library = {}
 
@@ -23,7 +25,11 @@ class Image:
         """
         self.log.info('Finding images')
         for release in self.releases:
-            fingerprint = self.find_lxc_image(self.store, self.arch, release)
+            # FIXME : Workaround broken --format=json option in find_lxc_image
+            if (self.fingerprint) :
+                fingerprint = self.fingerprint
+            else : 
+                fingerprint = self.find_lxc_image(self.store, self.arch, release)
             name = ('lxctest-' + self.arch + '-' +
                     release.replace('/', '-') + '-' + self.index)
             self.library[fingerprint] = name
