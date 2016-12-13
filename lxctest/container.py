@@ -70,8 +70,21 @@ class Container:
         """
         Starts a container
         """
+
+        self._run('lxc config set %s security.privileged "true"' % self.name)
+        time.sleep(1)
         self._run('lxc start %s' % self.name)
         self._ready()
+        self._attach_network()
+
+    def _attach_network(self):
+        """
+        Attach the network
+        """
+        self._run('lxc network attach lxcbr0 %s eth0' % self.name)
+        time.sleep(3)
+        self.execute('ip link set eth0 up')
+        time.sleep(3)
 
     def _ready(self, timeout=15):
         """

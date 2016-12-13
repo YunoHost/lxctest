@@ -39,6 +39,7 @@ def run_tests(store, fingerprint, name, test, log_dir, debug, save):
     Wrapper function to run a complete test.
     """
     c = Container(name, log_dir, debug)
+
     c.init(store, fingerprint)
 
     if 'push' in test:
@@ -65,6 +66,11 @@ def run_tests(store, fingerprint, name, test, log_dir, debug, save):
 
     if not save:
         c.delete()
+
+    if 'analyze' in test:
+        for command in test['analyze']:
+            command = command+" "+log_dir
+            c._run(command)
 
 
 def check_python_version():
@@ -121,9 +127,10 @@ def setup_logging(name, debug, user_logdir):
              .replace(':', '').replace('-', '').replace('T', '-')
              .split('.')[0])
 
-    log_dir = os.path.join('logs', index)
     if user_logdir:
-        log_dir = user_logdir
+        log_dir = os.path.join(user_logdir, index)
+    else:
+        log_dir = os.path.join('logs', index)
 
     if not os.path.exists(log_dir):
         os.makedirs(log_dir)
