@@ -10,8 +10,6 @@ class Image:
         self.store = config['store']
         self.arch = config['arch']
         self.releases = config['releases']
-        # FIXME : Workaround broken --format=json option in find_lxc_image
-        self.fingerprint = config['fingerprint']
         self.index = index
         self.library = {}
 
@@ -25,11 +23,7 @@ class Image:
         """
         self.log.info('Finding images')
         for release in self.releases:
-            # FIXME : Workaround broken --format=json option in find_lxc_image
-            if (self.fingerprint) :
-                fingerprint = self.fingerprint
-            else : 
-                fingerprint = self.find_lxc_image(self.store, self.arch, release)
+            fingerprint = self.find_lxc_image(self.store, self.arch, release)
             name = ('lxctest-' + self.arch + '-' +
                     release.replace('/', '-') + '-' + self.index)
             self.library[fingerprint] = name
@@ -40,11 +34,15 @@ class Image:
         image. Assumes you want 1 image and not many. In fact errors out
         if 0 or many are found.
         """
-        cmd = 'lxc image list --format=json %s: %s/%s' % (
-              self.store, release, self.arch)
-        out, err, rc = util.run(cmd.split())
+        #cmd = 'lxc image list --format=json %s: %s/%s' % (
+        #      self.store, release, self.arch)
+        cmd = 'lxc image list %s: %s/%s | grep %s | sed \'s/ | /|/g\' | cut -d \'|\' -f 3' % (
+              self.store, release, self.arch, release)
+        out, err, rc = util.run(cmd, shell = True)
 
-        results = json.loads(out)
+        return out
+
+        #results = json.loads(out)
 
         if len(results) != 1:
             self.log.critical(('Image search resulted in %s results. '

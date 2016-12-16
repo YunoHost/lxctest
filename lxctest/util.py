@@ -1,14 +1,20 @@
 import subprocess
 
 
-def run(command):
+def run(command, shell = False):
     """
     Wrapper around subprocess to execute commands.
     """
     try:
-        child = subprocess.Popen(command,
-                                 stdout=subprocess.PIPE,
-                                 stderr=subprocess.PIPE)
+        if (not shell):
+            child = subprocess.Popen(command,
+                                     stdout=subprocess.PIPE,
+                                     stderr=subprocess.PIPE)
+        else :
+            child = subprocess.Popen(command,
+                                     shell=True,
+                                     stdout=subprocess.PIPE,
+                                     stderr=subprocess.PIPE)
 
         (stdout, stderr) = child.communicate()
         return_code = child.returncode
